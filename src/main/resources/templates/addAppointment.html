@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>SkillSharing</title>
+    <link rel="stylesheet" href="/css/reset-css.css"/>
+    <link rel="stylesheet" href="/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/main.css"/>
+    <script src="/js/jquery-3.5.1.slim.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+</head>
+<body>
+<div>
+    <div>
+        <form class="form-control" id="appointmentForm" name="appointmentForm" th:object="${addAppointment}" th:action="@{/addAppointment}" method="post">
+            <div class="form-group">
+                <div>
+                    <label for="meet">
+                        <input id="meet" name="meet" type="text" value="text">
+                    </label>
+                </div>
+                <div class="form-group text-center">
+                    <input id="button" class="btn btn-primary" value="AddAppointment" type="button" onclick="getValue()">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script language="javascript">
+    function getValue(){
+        opener.document.location.reload();
+        localStorage.setItem(localStorage.getItem('date')+'my',document.appointmentForm.meet.value);
+        self.close();
+    }
+</script>
+</body>
+</html>

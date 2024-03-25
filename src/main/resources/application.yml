@@ -1,0 +1,42 @@
+spring:
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: 'TRUE'
+    hibernate:
+      ddl-auto: update
+    open-in-view: 'false'
+  mvc:
+    hidden method:
+      filter:
+        enabled: true
+  datasource:
+    driverClassName: com.mysql.jdbc.Driver
+    password: samsungga123@#456
+    username: root
+    url: jdbc:mysql://localhost:3306/trading?allowPublicKeyRetrieval=true&useSSL=false&createDatabaseIfNotExist=true&serverTimezone=UTC
+  mail:
+    properties:
+      smtp:
+        auth: true
+        STARTTLS:
+        enable: true
+    username: akobachev@gmail.com
+    password: dxze fiis jmiv pdtz
+    host: smtp.gmail.com
+    port: 587
+    default-encoding: UTF-8
+    protocol: smtp
+    test-connection: false
+logging:
+  level:
+    org:
+      hibernate:
+        type:
+          descriptor: TRACE
+        SQL: DEBUG
+      nodeValue: WARN
+    blog: WARN
+server:
+  port: 8000

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>SkillSharing</title>
+    <link rel="stylesheet" href="/css/reset-css.css"/>
+    <link rel="stylesheet" href="/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/main.css"/>
+    <script src="/js/jquery-3.5.1.slim.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+</head>
+<body style="background: #0056b3">
+<div th:action="@{/admin/all-users}" method="post">
+    <table class="table-responsive" style="background: #34ce57">
+        <thead class="table-info">
+        <tr style="background: #34ce57">
+            <th>
+                First name
+            </th>
+            <th>
+                Last name
+            </th>
+            <th>
+                Email
+            </th>
+            <th>
+                Username
+            </th>
+        </tr>
+        </thead>
+        <tbody th:each="user : ${users}">
+        <tr  th:object="${user}">
+            <td>
+ <span th:text="${user.firstName}">First name</span>
+            </td>
+            <td>
+                <span th:text="${user.lastName}">Last name</span>
+            </td>
+            <td>
+                <span th:text="${user.email}">Email</span>
+            </td>
+            <td>
+                <span th:text="${user.username}">Username</span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

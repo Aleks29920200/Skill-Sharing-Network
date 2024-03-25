@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <title>SkillSharing</title>
+  <link rel="stylesheet" href="/css/reset-css.css"/>
+  <link rel="stylesheet" href="/css/bootstrap.min.css"/>
+  <link rel="stylesheet" type="text/css" href="/css/main.css"/>
+  <script src="/js/jquery-3.5.1.slim.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+</head>
+<body style="background-color: #6f42c1">
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav mr-auto col-12 justify-content-between">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/register}">
+                        <button class="btn-primary btn-dark" type="button">
+                            Register
+                        </button>
+                    </a>
+                </li>
+                <li class="nav-link">
+                    <a class="nav-link" th:href="@{/login}">
+                        <button class="btn-primary btn-dark" type="button">
+                            Login
+                        </button>
+                    </a>
+                </li>
+                <li class="nav-link">
+                    <a class="nav-link" th:href="@{/home}" sec:authorize="isAuthenticated()">
+                        <button class="btn-primary btn-dark" type="button">
+                            Home
+                        </button>
+                    </a>
+                </li>
+                <li class="nav-tabs">
+                    <div class="flex-row">
+                        <button type="button" onclick="window.location.href='/index/search/it'" style="background-color: #34ce57;">
+                            It
+                        </button>
+                        <button id="medicine"  type="button" onclick="window.location.href='/index/search/medicine'" style="background-color: #6f42c1;">
+                            Medicine
+                        </button>
+                        <button id="archeology" type="button" onclick="window.location.href='/index/search/archeology'" style="background-color: #20c997;">
+                            Archeology
+                        </button>
+                    </div>
+                    <form th:action="@{/search}" method="post" th:object="${searchDto}">
+                        <label for="search">
+                            <input type="search" name="search" id="search" th:field="*{info}">
+                        </label>
+                        <button type="submit" style="background-color: #f16000">Search</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div th:each="skill : ${skills}">
+        <div th:each="user : ${skill.createdBy}">
+            <div class="container">
+                <div
+                        class="square square-lg bg-secondary responsive  "  >
+                    <h2>Name <strong  th:text="*{user.firstName}"></strong></h2>
+                    <h4>Age: <strong th:text="*{user.lastName}"></strong></h4>
+                    <h4>Address: <strong th:text="*{user.email}"></strong></h4>
+                    <h4>Start: <strong th:text="*{user.username}"></strong></h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:each="user : ${users}" th:action="@{'/index/search/'+${skill.category}}">
+        <div class="container">
+            <div
+                    class="square square-lg bg-secondary responsive  "  >
+                <h2>Name <strong  th:text="*{user.firstName}"></strong></h2>
+                <h4>Age: <strong th:text="*{user.lastName}"></strong></h4>
+                <h4>Address: <strong th:text="*{user.email}"></strong></h4>
+                <h4>Start: <strong th:text="*{user.username}"></strong></h4>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

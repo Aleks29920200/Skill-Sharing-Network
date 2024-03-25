@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>SkillSharing</title>
+    <link rel="stylesheet" href="/css/reset-css.css"/>
+    <link rel="stylesheet" href="/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/main.css"/>
+    <script src="/js/jquery-3.5.1.slim.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <style>
+        #replied{
+            width: 50px;
+            z-index: 30;
+            height: 50px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="user-form justify-content-sm-center" id="username-page">
+    <h2>Enter Chatroom</h2>
+    <form id="usernameForm">
+        <label for="nickname">Nickname:</label>
+        <input type="text" id="nickname" name="nickname" th:value="${username}" required>
+
+        <label for="fullName">Real Name:</label>
+        <input type="text" id="fullName" name="fullName" th:value="${firstname}" required>
+
+        <button type="submit">Enter Chatroom</button>
+    </form>
+</div>
+
+<div class="hidden dropdown-menu-right" id="navigation">
+    <a class="dropdown-item" href="#reply" id="replyToMessage"><svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 512 512"><path d="M205 34.8c11.5 5.1 19 16.6 19 29.2v64H336c97.2 0 176 78.8 176 176c0 113.3-81.5 163.9-100.2 174.1c-2.5 1.4-5.3 1.9-8.1 1.9c-10.9 0-19.7-8.9-19.7-19.7c0-7.5 4.3-14.4 9.8-19.5c9.4-8.8 22.2-26.4 22.2-56.7c0-53-43-96-96-96H224v64c0 12.6-7.4 24.1-19 29.2s-25 3-34.4-5.4l-160-144C3.9 225.7 0 217.1 0 208s3.9-17.7 10.6-23.8l160-144c9.4-8.5 22.9-10.6 34.4-5.4z"/></svg></a>
+    <a class="dropdown-item" href="#delete"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0H284.2c12.1 0 23.2 6.8 28.6 17.7L320 32h96c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 96 0 81.7 0 64S14.3 32 32 32h96l7.2-14.3zM32 128H416V448c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V128zm96 64c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16z"/></svg></a>
+    <a class="dropdown-item" href="#edit"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M402.6 83.2l90.2 90.2c3.8 3.8 3.8 10 0 13.8L274.4 405.6l-92.8 10.3c-12.4 1.4-22.9-9.1-21.5-21.5l10.3-92.8L388.8 83.2c3.8-3.8 10-3.8 13.8 0zm162-22.9l-48.8-48.8c-15.2-15.2-39.9-15.2-55.2 0l-35.4 35.4c-3.8 3.8-3.8 10 0 13.8l90.2 90.2c3.8 3.8 10 3.8 13.8 0l35.4-35.4c15.2-15.3 15.2-40 0-55.2zM384 346.2V448H64V128h229.8c3.2 0 6.2-1.3 8.5-3.5l40-40c7.6-7.6 2.2-20.5-8.5-20.5H48C21.5 64 0 85.5 0 112v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V306.2c0-10.7-12.9-16-20.5-8.5l-40 40c-2.2 2.3-3.5 5.3-3.5 8.5z"/></svg></a>
+</div>
+
+<div id="reply" class="hidden">
+    <div id="replied">
+        <p id="repliedText">Reply to </p>
+    </div>
+</div>
+
+<div class="chat-container hidden" id="chat-page">
+    <div class="users-list">
+        <div class="users-list-container">
+            <h2>Online Users</h2>
+            <ul id="connectedUsers">
+            </ul>
+        </div>
+        <div>
+            <p id="connected-user-fullName"></p>
+            <a class="logout" href="javascript:void(0)" id="logout">Logout</a>
+        </div>
+    </div>
+
+
+    <div class="chat-area">
+        <div class="chat-area" id="chat-messages">
+        </div>
+
+        <form id="messageForm" name="messageForm" class="hidden">
+            <div class="message-input">
+                <label for="message"></label><input autocomplete="off" type="text" id="message" placeholder="Type your message...">
+                <button>Send</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script >
+    'use strict';
+
+    const usernamePage = document.querySelector('#username-page');
+    const chatPage = document.querySelector('#chat-page');
+    const usernameForm = document.querySelector('#usernameForm');
+    const messageForm = document.querySelector('#messageForm');
+    const messageInput = document.querySelector('#message');
+    const connectingElement = document.querySelector('.connecting');
+    const chatArea = document.querySelector('#chat-messages');
+    const logout = document.querySelector('#logout');
+
+    let stompClient = null;
+    let nickname = null;
+    let fullName = null;
+    let selectedUserId = null;
+
+    function connect(event) {
+        nickname = document.querySelector('#nickname').value.trim();
+        fullName = document.querySelector('#fullName').value.trim();
+
+        if (nickname && fullName) {
+            usernamePage.classList.add('hidden');
+            chatPage.classList.remove('hidden');
+
+            const socket = new SockJS('/ws');
+            stompClient = Stomp.over(socket);
+
+            stompClient.connect({}, onConnected, onError);
+        }
+        event.preventDefault();
+    }
+
+    function onConnected() {
+        stompClient.subscribe(`/user/${nickname}/queue/messages`, onMessageReceived);
+        stompClient.subscribe(`/user/public`, onMessageReceived);
+        stompClient.send("/app/user.addUser",
+            {},
+            JSON.stringify({username: nickname, firstName: fullName, activity: 'ONLINE'})
+        );
+        document.querySelector('#connected-user-fullName').textContent = fullName;
+        findAndDisplayConnectedUsers().then();
+    }
+
+    async function findAndDisplayConnectedUsers() {
+        const connectedUsersResponse = await fetch('/users');
+        let connectedUsers = await connectedUsersResponse.json();
+        connectedUsers = connectedUsers.filter(user => user.username !== nickname);
+        const connectedUsersList = document.getElementById('connectedUsers');
+        connectedUsersList.innerHTML = '';
+
+        connectedUsers.forEach(user => {
+            appendUserElement(user, connectedUsersList);
+            if (connectedUsers.indexOf(user) < connectedUsers.length - 1) {
+                const separator = document.createElement('li');
+                separator.classList.add('separator');
+                connectedUsersList.appendChild(separator);
+            }
+        });
+    }
+
+    function appendUserElement(user, connectedUsersList) {
+        const listItem = document.createElement('li');
+        listItem.classList.add('user-item');
+        listItem.id = user.username;
+
+        const userImage = document.createElement('img');
+        userImage.src = '/img/sharing-skills.png';
+        userImage.alt = user.firstName;
+
+        const usernameSpan = document.createElement('span');
+        usernameSpan.textContent = user.firstName;
+
+        const receivedMsg = document.createElement('span');
+        receivedMsg.textContent = '0';
+        receivedMsg.classList.add('nbr-msg', 'hidden');
+
+        listItem.appendChild(userImage);
+        listItem.appendChild(usernameSpan);
+        listItem.appendChild(receivedMsg);
+
+        listItem.addEventListener('click', userItemClick);
+
+        connectedUsersList.appendChild(listItem);
+    }
+
+    function userItemClick(event) {
+        document.querySelectorAll('.user-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        messageForm.classList.remove('hidden');
+
+        const clickedUser = event.currentTarget;
+        clickedUser.classList.add('active');
+
+        selectedUserId = clickedUser.getAttribute('id');
+        fetchAndDisplayUserChat().then();
+
+        const nbrMsg = clickedUser.querySelector('.nbr-msg');
+        nbrMsg.classList.add('hidden');
+        nbrMsg.textContent = '0';
+
+        document.querySelector('#reply').classList.add('hidden');
+
+    }
+
+    function replyToMessage() {
+        if (!selectedUserId) return;
+
+        const repliedText = document.querySelector('#repliedText').textContent;
+        const messageInput = document.querySelector('#message');
+        let htmlParagraphElement = document.getElementById("repliedText");
+        let text = document.createTextNode(`${"Reply to @"+selectedUserId}`);
+        messageInput.value = `${repliedText} `;
+
+        htmlParagraphElement.textContent=text.textContent;
+        messageInput.focus();
+
+        document.querySelector('#reply').classList.add('hidden');
+    }
+    let timeout;
+    let reply=false;
+    let messageToBeReplied;
+
+
+
+    function displayMessage(sender, content) {
+        const messageContainer = document.createElement('div');
+        messageContainer.className="text-dark";
+        messageContainer.classList.add('message');
+        if (sender === nickname) {
+            messageContainer.classList.add('sender');
+        //    const htmlSpanElement = document.createElement("span");
+        //    htmlSpanElement.appendChild(document.createTextNode("Sent"));
+         //   chatArea.appendChild(htmlSpanElement);
+        } else {
+            messageContainer.classList.add('receiver');
+        }
+        const message = document.createElement('p');
+        message.textContent = content;
+        message.addEventListener('mouseenter' ,function() {
+            function f() {
+                messageContainer.appendChild(document.querySelector('#navigation'));
+                document.querySelector('#navigation').classList.toggle("hidden",false);
+            }
+            timeout = setTimeout(f, 2000);
+            document.getElementById('replyToMessage').addEventListener('click',function (){
+                let element = document.querySelector('#replied');
+                messageForm.appendChild(element);
+                replyToMessage();
+                element.classList.toggle("hidden",false);
+                reply=true;
+            });
+            document.querySelector('#navigation').classList.toggle("hidden",true);
+        })
+        message.addEventListener('mouseleave',function () {
+            clearTimeout(timeout);
+        })
+        messageContainer.appendChild(message);
+        chatArea.appendChild(messageContainer);
+    }
+    async function fetchAndDisplayUserChat() {
+        const userChatResponse = await fetch(`/messages/${nickname}/${selectedUserId}`);
+        const userChat = await userChatResponse.json();
+        chatArea.innerHTML = '';
+        userChat.forEach(chat => {
+            displayMessage(chat.sender, chat.content);
+        });
+        chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+
+    function onError() {
+        connectingElement.textContent = 'Could not connect to WebSocket server. Please refresh this page to try again!';
+        connectingElement.style.color = 'red';
+    }
+
+    function sendMessage(event) {
+        const messageContent = messageInput.value.trim();
+        if (messageContent && stompClient) {
+                const chatMessage = {
+                    sender : nickname,
+                    receiver : selectedUserId,
+                    content : messageInput.value.trim(),
+                    timestamp: new Date()
+                };
+                stompClient.send("/app/chat", {}, JSON.stringify(chatMessage));
+                displayMessage(nickname, messageInput.value.trim());
+                messageInput.value = '';
+        }
+        chatArea.scrollTop = chatArea.scrollHeight;
+        event.preventDefault();
+    }
+
+
+    async function onMessageReceived(payload) {
+        await findAndDisplayConnectedUsers();
+        console.log('Message received', payload);
+        const message = JSON.parse(payload.body);
+        if (selectedUserId && selectedUserId === message.sender) {
+            displayMessage(message.sender, message.content);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        if (selectedUserId) {
+            document.querySelector(`#${selectedUserId}`).classList.add('active');
+        } else {
+            messageForm.classList.add('hidden');
+        }
+
+        const notifiedUser = document.querySelector(`#${message.sender}`);
+        if (notifiedUser && !notifiedUser.classList.contains('active')) {
+            const nbrMsg = notifiedUser.querySelector('.nbr-msg');
+            nbrMsg.classList.remove('hidden');
+            nbrMsg.textContent = '';
+        }
+    }
+
+    function onLogout() {
+        stompClient.send("/app/user.disconnectUser",
+            {},
+            JSON.stringify({username: nickname, firstName: fullName, activity: 'OFFLINE'})
+        );
+        window.location.reload();
+    }
+
+    usernameForm.addEventListener('submit', connect, true);
+    messageForm.addEventListener('submit', sendMessage, true);
+    logout.addEventListener('click', onLogout, true);
+    window.onbeforeunload = () => onLogout();
+</script>
+</body>
+</html>

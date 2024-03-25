@@ -1,0 +1,444 @@
+body {
+     background-position: center center;
+     background-repeat: no-repeat;
+     background-attachment: fixed;
+     background-size: cover;
+     background-color: dimgrey;
+ }
+
+.navbar .logo {
+     max-height: 50px;
+     padding-right: 100px;
+}
+
+.container, .container-fluid {
+     padding-top: 90px;
+}
+
+.bg-text {
+     background-color: rgb(0,0,0); /* Fallback color */
+     background-color: rgba(0,0,0, 0.4); /* Black w/opacity/see-through */
+     color: blue;
+     font-weight: lighter;
+     border: 3px solid midnightblue;
+     z-index: 2;
+     width: 80%;
+     padding: 20px;
+     text-align: center;
+}
+
+.brand-section {
+     background-image: linear-gradient(to bottom right, rgba(220, 220, 220, 0.9), rgba(255, 255, 255, 0.9));
+}
+
+td, th {
+     padding: 3px 8px;
+}
+body{margin-top:20px;}
+
+
+/*======= Contact ======*/
+
+.form-control {
+     box-shadow: none !important;
+     outline: none !important;
+     border: 2px solid #cecece;
+     height: 38px;
+}
+.form-control:hover ,.form-control:focus{
+     border-color: #97a0af;
+}
+
+
+.error {
+     margin: 8px 0px;
+     display: none;
+     color: red;
+}
+#ajaxsuccess {
+     font-size: 16px;
+     width: 100%;
+     display: none;
+     clear: both;
+     margin: 8px 0px;
+}
+.con_sub_text {
+     margin: 20px 0px;
+     font-size: 15px;
+}
+
+.contact-detail-box {
+     margin-bottom: 50px;
+}
+
+.contact-detail-box address {
+     font-size: 14px;
+}
+.contact-map {
+     background-color: #ededed;
+}
+
+.title-box .border,.btn-primary,.back-to-top,
+.logo i,.question-q-box,.social-circle li a:hover {
+     background-color: #f16000 !important;
+}
+.title-box .title-alt,.text-colored,.footer a:hover,
+.navbar-custom .navbar-nav li a:hover,
+.navbar-custom .navbar-nav li a:focus,
+.navbar-custom .navbar-nav li a:active,
+.navbar-custom .navbar-nav li.active a {
+     color: #f16000;
+}
+
+.btn-primary {
+     border: 1px solid #f16000 !important;
+}
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary.active,
+.btn-primary.focus,
+.btn-primary:active,
+.btn-primary:focus,
+.btn-primary:hover,
+.open > .dropdown-toggle.btn-primary,
+.btn-primary.active.focus, .btn-primary.active:focus,
+.btn-primary.active:hover, .btn-primary:active.focus,
+.btn-primary:active:focus, .btn-primary:active:hover,
+.open>.dropdown-toggle.btn-primary.focus,
+.open>.dropdown-toggle.btn-primary:focus,
+.open>.dropdown-toggle.btn-primary:hover {
+     background-color: #d85600 !important;
+     border: 1px solid #d85600 !important;
+}
+
+.btn-shadow.btn-primary {
+     box-shadow: 1px 5px 9px rgba(241, 96, 1, 0.32);
+}
+
+
+
+/*======= Responsive ======*/
+@media (min-width: 768px) {
+     .nav-custom-left {
+          margin-left: 5%;
+     }
+     .navbar-nav>li>a {
+          padding-top: 10px;
+          padding-bottom: 10px;
+     }
+     .contact-page .col-sm-6 {
+          padding-left: 30px;
+          padding-right: 30px;
+     }
+}
+
+@media (max-width: 768px) {
+     .navbar-custom {
+          -moz-box-shadow: 0 2px 2px rgba(0,0,0,.1);
+          -webkit-box-shadow: 0 2px 2px rgba(0,0,0,.1);
+          box-shadow: 0 2px 2px rgba(0,0,0,.1);
+     }
+     .screen-space {
+          margin: 0px auto 50px auto;
+     }
+     .feature-detail {
+          padding: 0px 0px 50px 30px !important;
+     }
+     .footer h5 {
+          margin-top: 30px;
+     }
+}
+
+
+@media only screen and (min-width: 768px) and (max-width: 991px){
+     .blog-wrapper .blog-item {
+          width: 50%;
+     }
+     .navbar-custom .navbar-nav li a {
+          font-size: 12px;
+     }
+     .blog-detail-box {
+          padding-right: 0px;
+     }
+}
+@media only screen and (min-width: 767px) and (max-width: 991px){
+
+}
+@media (max-width: 767px) {
+     .blog-wrapper .blog-item {
+          width: 100%;
+     }
+     .logo {
+          margin-top: 7px;
+     }
+     .blog-detail-box {
+          padding-right: 0px;
+     }
+}
+.comments {
+     grid-column: 1/4;
+     grid-row: 4;
+}
+.body {
+     font-family: Arial, Helvetica, sans-serif;
+     margin: 0;
+}
+
+html {
+     box-sizing: border-box;
+}
+
+*, *:before, *:after {
+     box-sizing: inherit;
+}
+
+.column {
+     float: left;
+     width: 33.3%;
+     margin-bottom: 16px;
+     padding: 0 8px;
+}
+
+.card {
+     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+     margin: 8px;
+}
+
+.about-section {
+     padding: 50px;
+     text-align: center;
+     background-color: #474e5d;
+     color: white;
+}
+
+.container {
+     padding: 0 16px;
+}
+
+.container::after, .row::after {
+     content: "";
+     clear: both;
+     display: table;
+}
+
+.title {
+     color: grey;
+}
+
+.button {
+     border: none;
+     outline: 0;
+     display: inline-block;
+     padding: 8px;
+     color: white;
+     background-color: #000;
+     text-align: center;
+     cursor: pointer;
+     width: 100%;
+}
+
+.button:hover {
+     background-color: #555;
+}
+
+@media screen and (max-width: 650px) {
+     .column {
+          width: 100%;
+          display: block;
+     }
+}
+.chat-container {
+     display: flex;
+     max-width: 800px;
+     min-width: 800px;
+     min-height: 600px;
+     max-height: 600px;
+     margin: 20px;
+     border: 1px solid #ccc;
+     background-color: #fff;
+     overflow: hidden;
+     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+     border-radius: 8px;
+}
+
+.users-list {
+     flex: 1;
+     border-right: 1px solid #ccc;
+     padding: 20px;
+     box-sizing: border-box;
+     background-color: #3498db;
+     color: #fff;
+     border-top-left-radius: 8px;
+     border-bottom-left-radius: 8px;
+     display: flex;
+     flex-direction: column;
+     justify-content: space-between;
+}
+
+.users-list-container {
+     height: 100%;
+     overflow-y: scroll;
+}
+
+.users-list h2 {
+     font-size: 1.5rem;
+     margin-bottom: 10px;
+}
+
+.users-list ul {
+     list-style: none;
+     padding: 0;
+     margin: 0;
+}
+
+.user-item {
+     display: flex;
+     align-items: center;
+     margin-bottom: 8px;
+     cursor: pointer;
+}
+
+.user-item.active {
+     background-color: #cdebff;
+     color: #4f4f4f;
+     padding: 10px;
+     border-radius: 5px;
+}
+
+.user-item img {
+     width: 40px;
+     height: 40px;
+     border-radius: 50%;
+     margin-right: 10px;
+}
+
+.user-item span {
+     font-weight: bold;
+}
+
+.separator {
+     height: 1px;
+     background-color: #ccc;
+     margin: 10px 0;
+}
+
+.chat-area {
+     flex: 3;
+     display: flex;
+     flex-direction: column;
+     padding: 20px;
+     box-sizing: border-box;
+     border-top-right-radius: 8px;
+     border-bottom-right-radius: 8px;
+}
+
+.message {
+     margin-bottom: 5px;
+     border-radius: 5px;
+}
+
+#chat-messages {
+     display: flex;
+     flex-direction: column;
+     overflow-y: scroll;
+}
+
+.message p {
+     padding: 0 12px;
+     border-radius: 15px;
+     word-wrap: break-word;
+}
+
+.user-item span.nbr-msg {
+     margin-left: 10px;
+     background-color: #f8fa6f;
+     color: white;
+     padding: 5px;
+     width: 10px;
+     border-radius: 50%;
+     height: 10px;
+}
+
+.sender {
+     background-color: #3498db;
+     color: #fff;
+     align-self: flex-end;
+}
+
+.receiver {
+     background-color: #ecf0f1;
+     color: #333;
+     align-self: flex-start;
+}
+
+.message-input {
+     margin-top: auto;
+     display: flex;
+}
+
+.message-input input {
+     flex: 1;
+     padding: 10px;
+     border: 1px solid #ccc;
+     border-radius: 5px;
+     margin-right: 10px;
+}
+
+.message-input button {
+     padding: 10px;
+     border: none;
+     background-color: #3498db;
+     color: #fff;
+     border-radius: 5px;
+     cursor: pointer;
+}
+
+.user-form {
+     max-width: 400px;
+     padding: 40px;
+     box-sizing: border-box;
+     background-color: #fff;
+     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+     border-radius: 8px;
+}
+
+.user-form h2 {
+     font-size: 1.5rem;
+     margin-bottom: 20px;
+     text-align: center;
+}
+
+.user-form label {
+     display: block;
+     margin-bottom: 8px;
+}
+
+.user-form input {
+     width: 100%;
+     padding: 10px 0;
+     border: 1px solid #ccc;
+     border-radius: 5px;
+     margin-bottom: 20px;
+}
+
+.user-form button {
+     padding: 12px;
+     border: none;
+     background-color: #3498db;
+     color: #fff;
+     border-radius: 5px;
+     cursor: pointer;
+     width: 100%;
+}
+
+.hidden {
+     display: none;
+}
+
+a.logout {
+     color: #fff;
+     text-decoration: none;
+}
+
+
