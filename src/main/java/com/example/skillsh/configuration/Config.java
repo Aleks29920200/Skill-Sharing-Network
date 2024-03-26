@@ -11,6 +11,7 @@ import org.w3c.dom.events.UIEvent;
 
 @Configuration
 public class Config {
+
     @Bean
     public RegisterDto registerDto(){
         return new RegisterDto();
