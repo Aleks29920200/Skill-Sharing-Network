@@ -10,6 +10,7 @@ import org.hibernate.id.UUIDGenerator;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.sql.Timestamp;
+import java.util.Map;
 import java.util.UUID;
 
 @Entity
@@ -26,8 +27,12 @@ public class Message {
     private String sender;
     private String receiver;
     private String chatId;
+    private String repliedPersonName;
+    @Column(columnDefinition = "TEXT")
+    private String previousMessage;
     @Column(columnDefinition = "TEXT")
     private String content;
     private Timestamp timestamp;
     private Boolean isRead;
+    private  String indicatorForDeletion;
 }

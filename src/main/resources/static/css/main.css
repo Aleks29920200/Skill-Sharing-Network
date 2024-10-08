@@ -37,7 +37,6 @@ td, th {
 body{margin-top:20px;}
 
 
-/*======= Contact ======*/
 
 .form-control {
      box-shadow: none !important;
@@ -241,6 +240,7 @@ html {
 .button:hover {
      background-color: #555;
 }
+
 
 @media screen and (max-width: 650px) {
      .column {

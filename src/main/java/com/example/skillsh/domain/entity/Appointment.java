@@ -24,7 +24,7 @@ public class Appointment {
     @OneToOne
     private Skill skill;
     private LocalDateTime dateOfAppointment;
-    private String location;
+    private String name;
     @Enumerated(EnumType.STRING)
     private StatusName status;
 }

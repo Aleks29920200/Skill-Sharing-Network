@@ -9,14 +9,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.security.Principal;
+import java.util.Optional;
 
 @Controller
 
@@ -37,15 +40,31 @@ public class ChatController {
     public void processMessage(@Payload Message chatMessage) {
         Message savedMsg = messageService.save(chatMessage);
         messagingTemplate.convertAndSendToUser(
-                chatMessage.getReceiver(), "/queue/messages",
-                new ChatNotification(
-                        savedMsg.getId(),
-                       savedMsg.getSender(),
-                       savedMsg.getReceiver(),
-                        savedMsg.getContent())
+                chatMessage.getSender(), "/queue/messages",
+              new ChatNotification(savedMsg.getId(),
+                      savedMsg.getSender(),
+                      savedMsg.getReceiver(),
+                      savedMsg.getRepliedPersonName(),
+                      savedMsg.getPreviousMessage(),
+                      savedMsg.getContent(),
+                      savedMsg.getIndicatorForDeletion())
         );
     }
-
+    @MessageMapping("/delete")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    public void deleteMessage(@Payload Message chatMessage) {
+        Message savedMsg = messageService.deleteMessage(chatMessage);
+        messagingTemplate.convertAndSendToUser(
+                chatMessage.getSender(), "/queue/messages",
+                new ChatNotification(savedMsg.getId(),
+                        savedMsg.getSender(),
+                        savedMsg.getReceiver(),
+                        savedMsg.getRepliedPersonName(),
+                        savedMsg.getPreviousMessage(),
+                        savedMsg.getContent(),
+                        savedMsg.getIndicatorForDeletion())
+        );
+    }
     @GetMapping("/messages/{senderId}/{recipientId}")
     public ResponseEntity<Object> findChatMessages(@PathVariable String senderId,
                                                           @PathVariable String recipientId) {

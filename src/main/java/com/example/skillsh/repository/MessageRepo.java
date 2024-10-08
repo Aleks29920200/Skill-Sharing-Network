@@ -10,4 +10,6 @@ import java.util.Optional;
 @Repository
 public interface MessageRepo extends JpaRepository<Message, String> {
 List<Message> findByChatId(String chatId);
+Optional<Message> findMessageByContent(String content);
+
 }

@@ -15,7 +15,7 @@ spring:
     driverClassName: com.mysql.jdbc.Driver
     password: samsungga123@#456
     username: root
-    url: jdbc:mysql://localhost:3306/trading?allowPublicKeyRetrieval=true&useSSL=false&createDatabaseIfNotExist=true&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/trading
   mail:
     properties:
       smtp:

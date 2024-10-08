@@ -26,7 +26,7 @@ public class MessageServiceImpl implements MessageService {
     public Message save(Message chatMessage) {
         var chatId = chatService
                 .getChatRoomId(chatMessage.getSender(),chatMessage.getReceiver(), true)
-                .orElseThrow(); // You can create your own dedicated exception
+                .orElseThrow();
         chatMessage.setChatId(chatId);
        messageRepo.save(chatMessage);
         return chatMessage;
@@ -37,4 +37,16 @@ public class MessageServiceImpl implements MessageService {
             var chatId = chatService.getChatRoomId(senderId, recipientId, false);
         return chatId.map(messageRepo::findByChatId).orElse(new ArrayList<>());
     }
+
+    @Override
+    public Message deleteMessage(Message delMessage) {
+        Message message = this.messageRepo.findMessageByContent(delMessage.getContent()).orElse(null);
+        try{
+            this.messageRepo.delete(message);
+        }catch(Exception e){
+            System.out.println("Non existing message");
+        }
+        return message;
+    }
+
 }

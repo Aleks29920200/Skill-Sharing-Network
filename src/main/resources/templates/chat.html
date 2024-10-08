@@ -10,16 +10,34 @@
     <script src="/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-    <style>
-        #replied{
-            width: 50px;
-            z-index: 30;
-            height: 50px;
-        }
-    </style>
 </head>
-<body>
+<style>
+    .emoji-drawer {
+        display: grid;
 
+        grid-template-columns: repeat(3, 1fr);
+
+        width: 100px;
+
+        margin-bottom: 32px;
+        transition: opacity 0.2s;
+    }
+
+    .hidden {
+        opacity: 0;
+    }
+
+    .emoji {
+        text-align: center;
+        font-size: 24px;
+        padding: 8px;
+    }
+
+    .emoji:hover {
+        cursor: pointer;
+    }
+</style>
+<body>
 <div class="user-form justify-content-sm-center" id="username-page">
     <h2>Enter Chatroom</h2>
     <form id="usernameForm">
@@ -35,15 +53,17 @@
 
 <div class="hidden dropdown-menu-right" id="navigation">
     <a class="dropdown-item" href="#reply" id="replyToMessage"><svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 512 512"><path d="M205 34.8c11.5 5.1 19 16.6 19 29.2v64H336c97.2 0 176 78.8 176 176c0 113.3-81.5 163.9-100.2 174.1c-2.5 1.4-5.3 1.9-8.1 1.9c-10.9 0-19.7-8.9-19.7-19.7c0-7.5 4.3-14.4 9.8-19.5c9.4-8.8 22.2-26.4 22.2-56.7c0-53-43-96-96-96H224v64c0 12.6-7.4 24.1-19 29.2s-25 3-34.4-5.4l-160-144C3.9 225.7 0 217.1 0 208s3.9-17.7 10.6-23.8l160-144c9.4-8.5 22.9-10.6 34.4-5.4z"/></svg></a>
-    <a class="dropdown-item" href="#delete"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0H284.2c12.1 0 23.2 6.8 28.6 17.7L320 32h96c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 96 0 81.7 0 64S14.3 32 32 32h96l7.2-14.3zM32 128H416V448c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V128zm96 64c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16z"/></svg></a>
-    <a class="dropdown-item" href="#edit"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M402.6 83.2l90.2 90.2c3.8 3.8 3.8 10 0 13.8L274.4 405.6l-92.8 10.3c-12.4 1.4-22.9-9.1-21.5-21.5l10.3-92.8L388.8 83.2c3.8-3.8 10-3.8 13.8 0zm162-22.9l-48.8-48.8c-15.2-15.2-39.9-15.2-55.2 0l-35.4 35.4c-3.8 3.8-3.8 10 0 13.8l90.2 90.2c3.8 3.8 10 3.8 13.8 0l35.4-35.4c15.2-15.3 15.2-40 0-55.2zM384 346.2V448H64V128h229.8c3.2 0 6.2-1.3 8.5-3.5l40-40c7.6-7.6 2.2-20.5-8.5-20.5H48C21.5 64 0 85.5 0 112v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V306.2c0-10.7-12.9-16-20.5-8.5l-40 40c-2.2 2.3-3.5 5.3-3.5 8.5z"/></svg></a>
+    <a class="dropdown-item" href="#delete"  id="deleteMessage"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0H284.2c12.1 0 23.2 6.8 28.6 17.7L320 32h96c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 96 0 81.7 0 64S14.3 32 32 32h96l7.2-14.3zM32 128H416V448c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V128zm96 64c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16z"/></svg></a>
+    <a class="dropdown-item" href="#edit" id="editMessage"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M402.6 83.2l90.2 90.2c3.8 3.8 3.8 10 0 13.8L274.4 405.6l-92.8 10.3c-12.4 1.4-22.9-9.1-21.5-21.5l10.3-92.8L388.8 83.2c3.8-3.8 10-3.8 13.8 0zm162-22.9l-48.8-48.8c-15.2-15.2-39.9-15.2-55.2 0l-35.4 35.4c-3.8 3.8-3.8 10 0 13.8l90.2 90.2c3.8 3.8 10 3.8 13.8 0l35.4-35.4c15.2-15.3 15.2-40 0-55.2zM384 346.2V448H64V128h229.8c3.2 0 6.2-1.3 8.5-3.5l40-40c7.6-7.6 2.2-20.5-8.5-20.5H48C21.5 64 0 85.5 0 112v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V306.2c0-10.7-12.9-16-20.5-8.5l-40 40c-2.2 2.3-3.5 5.3-3.5 8.5z"/></svg></a>
 </div>
 
 <div id="reply" class="hidden">
     <div id="replied">
-        <p id="repliedText">Reply to </p>
+        <p id="repliedText"> </p>
     </div>
 </div>
+
+
 
 <div class="chat-container hidden" id="chat-page">
     <div class="users-list">
@@ -57,15 +77,30 @@
             <a class="logout" href="javascript:void(0)" id="logout">Logout</a>
         </div>
     </div>
-
-
     <div class="chat-area">
         <div class="chat-area" id="chat-messages">
+
         </div>
 
         <form id="messageForm" name="messageForm" class="hidden">
             <div class="message-input">
-                <label for="message"></label><input autocomplete="off" type="text" id="message" placeholder="Type your message...">
+                <p onclick="toggleEmojiDrawer()">&#128512;</p>
+                <div id="drawer" class="emoji-drawer hidden" style="overflow: scroll">
+                    <div class="emoji" onclick="addEmoji(this.innerHTML)">😀</div>
+                    <div class="emoji" onclick="addEmoji(this.innerHTML)">😃</div>
+                    <div class="emoji" onclick="addEmoji(this.innerHTML)">😄</div>
+                    <div class="emoji" onclick="addEmoji(this.innerHTML)">😁</div>
+                    <div class="emoji" onclick="addEmoji(this.innerHTML)">😆</div>
+                    <div class="emoji" onclick="addEmoji(this.innerHTML)">💤</div>
+                    <div class="emoji" onclick="addEmoji(this.innerHTML)">😈</div>
+                    <div class="emoji" onclick="addEmoji(this.innerHTML)">👿</div>
+                    <div class="emoji" onclick="addEmoji(this.innerHTML)">👹</div>
+                    <div class="emoji" onclick="addEmoji(this.innerHTML)">👺</div>
+                    <div class="emoji" onclick="addEmoji(this.innerHTML)">💀</div>
+                </div>
+                <label for="message">
+                </label>
+                <input autocomplete="off" type="text" id="message"   placeholder="Type your message..." >
                 <button>Send</button>
             </div>
         </form>
@@ -82,11 +117,22 @@
     const connectingElement = document.querySelector('.connecting');
     const chatArea = document.querySelector('#chat-messages');
     const logout = document.querySelector('#logout');
+    const deleting = document.querySelector('#delete');
 
+    let previousMessage="";
+    let previousMessageOfReplied="";
+    let id='';
+    let counterForSender=0;
+    let counterForReceiver=0;
     let stompClient = null;
     let nickname = null;
     let fullName = null;
     let selectedUserId = null;
+    let deleteMessage="";
+    let deleteM=false;
+    let deleteMReply=false;
+    let senderOfDeletedMessage='';
+    let previousMessageOfDeleted="";
 
     function connect(event) {
         nickname = document.querySelector('#nickname').value.trim();
@@ -111,10 +157,24 @@
             {},
             JSON.stringify({username: nickname, firstName: fullName, activity: 'ONLINE'})
         );
+
         document.querySelector('#connected-user-fullName').textContent = fullName;
         findAndDisplayConnectedUsers().then();
     }
+    function addEmoji(emoji) {
+        let inputEle = document.getElementById('message');
+        messageInput.value += emoji;
+    }
 
+    function toggleEmojiDrawer() {
+        let drawer = document.getElementById('drawer');
+
+        if (drawer.classList.contains('hidden')) {
+            drawer.classList.remove('hidden');
+        } else {
+            drawer.classList.add('hidden');
+        }
+    }
     async function findAndDisplayConnectedUsers() {
         const connectedUsersResponse = await fetch('/users');
         let connectedUsers = await connectedUsersResponse.json();
@@ -166,6 +226,10 @@
         const clickedUser = event.currentTarget;
         clickedUser.classList.add('active');
 
+        if(chatArea.children.length===0){
+            localStorage.setItem("counterForSender","");
+            localStorage.setItem("counterForReceiver","");
+        }
         selectedUserId = clickedUser.getAttribute('id');
         fetchAndDisplayUserChat().then();
 
@@ -176,40 +240,28 @@
         document.querySelector('#reply').classList.add('hidden');
 
     }
-
-    function replyToMessage() {
-        if (!selectedUserId) return;
-
-        const repliedText = document.querySelector('#repliedText').textContent;
-        const messageInput = document.querySelector('#message');
-        let htmlParagraphElement = document.getElementById("repliedText");
-        let text = document.createTextNode(`${"Reply to @"+selectedUserId}`);
-        messageInput.value = `${repliedText} `;
-
-        htmlParagraphElement.textContent=text.textContent;
-        messageInput.focus();
-
-        document.querySelector('#reply').classList.add('hidden');
-    }
     let timeout;
     let reply=false;
-    let messageToBeReplied;
-
-
-
+    let edit=false;
+    let editedMessageId='';
+    let messageSelected1="";
     function displayMessage(sender, content) {
         const messageContainer = document.createElement('div');
-        messageContainer.className="text-dark";
         messageContainer.classList.add('message');
         if (sender === nickname) {
             messageContainer.classList.add('sender');
-        //    const htmlSpanElement = document.createElement("span");
-        //    htmlSpanElement.appendChild(document.createTextNode("Sent"));
-         //   chatArea.appendChild(htmlSpanElement);
+            counterForSender++;
+            id=sender+" "+counterForSender;
+            const htmlSpanElement = document.createElement("span");
+             htmlSpanElement.appendChild(document.createTextNode("Sent"));
+             chatArea.appendChild(htmlSpanElement);
         } else {
             messageContainer.classList.add('receiver');
+            counterForReceiver++;
+            id=sender+" "+counterForReceiver;
         }
         const message = document.createElement('p');
+        message.id=id;
         message.textContent = content;
         message.addEventListener('mouseenter' ,function() {
             function f() {
@@ -218,10 +270,10 @@
             }
             timeout = setTimeout(f, 2000);
             document.getElementById('replyToMessage').addEventListener('click',function (){
-                let element = document.querySelector('#replied');
-                messageForm.appendChild(element);
-                replyToMessage();
-                element.classList.toggle("hidden",false);
+                let htmlSpanElement = document.createElement("span");
+                htmlSpanElement.appendChild(document.createTextNode("Reply to @"+sender));
+                messageForm.appendChild(htmlSpanElement);
+               messageSelected1=message.id;
                 reply=true;
             });
             document.querySelector('#navigation').classList.toggle("hidden",true);
@@ -229,17 +281,73 @@
         message.addEventListener('mouseleave',function () {
             clearTimeout(timeout);
         })
-
-        messageContainer.appendChild(message);
-        chatArea.appendChild(messageContainer);
+            previousMessage=localStorage.getItem("id");
+            messageContainer.appendChild(message);
+            chatArea.appendChild(messageContainer);
+    }
+    let replyToReply;
+    let messageSelected="";
+    function replyToMessage(sender,content,previousMesg) {
+        const prevoiusMessageId=id;
+        const repliedMessageContainer = document.createElement("div");
+        repliedMessageContainer.classList.add('message');
+        const  repliedMessage=document.createElement("div");
+        const htmlParagraphElement1 = document.createElement("p");
+        const htmlParagraphElement2 = document.createElement("p");
+        const htmlParagraphElement = document.createElement("p");
+        htmlParagraphElement.textContent=content;
+        const text = document.createTextNode(`${"Reply to @"+sender}`);
+        htmlParagraphElement1.appendChild(text);
+        htmlParagraphElement2.textContent=previousMesg;
+        if(sender === nickname){
+            repliedMessageContainer.classList.add('sender');
+            counterForSender++;
+            id=sender+" "+counterForSender;
+        }else{
+            repliedMessageContainer.classList.add('receiver');
+            counterForReceiver++;
+            id=sender+" "+counterForReceiver;
+        }
+        repliedMessage.id=id
+        repliedMessage.appendChild(htmlParagraphElement1);
+        repliedMessage.appendChild(htmlParagraphElement2);
+        repliedMessage.appendChild(htmlParagraphElement);
+        content=htmlParagraphElement+"\n"+htmlParagraphElement2+"\n"+htmlParagraphElement1;
+        repliedMessage.addEventListener('mouseenter' ,function() {
+            function f() {
+                repliedMessageContainer.appendChild(document.querySelector('#navigation'));
+                document.querySelector('#navigation').classList.toggle("hidden",false);
+            }
+            timeout = setTimeout(f, 2000);
+            document.getElementById('replyToMessage').addEventListener('click',function (){
+                let htmlSpanElement = document.createElement("span");
+                htmlSpanElement.appendChild(document.createTextNode("Reply to @"+sender));
+                messageForm.appendChild(htmlSpanElement);
+                messageSelected=repliedMessage.id;
+                replyToReply=true;
+            });
+            document.querySelector('#navigation').classList.toggle("hidden",true);
+        })
+        repliedMessage.addEventListener('mouseleave',function () {
+            clearTimeout(timeout);
+        })
+        repliedMessageContainer.appendChild(repliedMessage);
+        chatArea.appendChild(repliedMessageContainer);
     }
     async function fetchAndDisplayUserChat() {
         const userChatResponse = await fetch(`/messages/${nickname}/${selectedUserId}`);
         const userChat = await userChatResponse.json();
         chatArea.innerHTML = '';
         userChat.forEach(chat => {
-            displayMessage(chat.sender, chat.content);
-        });
+            if (chat.previousMessage === null) {
+                displayMessage(chat.sender, chat.content);
+            }else if(chat.indicatorForDeletion===true){
+                displayMessage(chat.sender,"The message was removed")
+            }
+            else{
+                replyToMessage(chat.sender,chat.content,chat.previousMessage);
+            }
+        })
         chatArea.scrollTop = chatArea.scrollHeight;
     }
 
@@ -250,29 +358,63 @@
     }
 
     function sendMessage(event) {
+        const deleteMessage1=deleteMessage;
+        const messageReplied1=messageSelected1;
+        const messageReplied=messageSelected;
         const messageContent = messageInput.value.trim();
-        if (messageContent && stompClient) {
-                const chatMessage = {
-                    sender : nickname,
-                    receiver : selectedUserId,
-                    content : messageInput.value.trim(),
-                    timestamp: new Date()
-                };
-                stompClient.send("/app/chat", {}, JSON.stringify(chatMessage));
-                displayMessage(nickname, messageInput.value.trim());
-                messageInput.value = '';
+                if (reply === true) {
+                    const chatMessageReply = {
+                        sender: nickname,
+                        receiver: selectedUserId,
+                        repliedPersonName: "Reply to @" + selectedUserId,
+                        previousMessage: document.getElementById(messageReplied1).textContent,
+                        content: messageInput.value.trim(),
+                        indicatorForDeletion: false,
+                        timestamp: new Date()
+                    };
+                    stompClient.send("/app/chat", {}, JSON.stringify(chatMessageReply));
+                    replyToMessage(nickname, messageInput.value.trim(), document.getElementById(messageReplied1).textContent);
+                } else if (replyToReply === true) {
+                    const chatMessageReply = {
+                        sender: nickname,
+                        receiver: selectedUserId,
+                        repliedPersonName: "Reply to @" + selectedUserId,
+                        previousMessage: document.getElementById(messageReplied).textContent,
+                        content: messageInput.value.trim(),
+                        indicatorForDeletion: false,
+                        timestamp: new Date()
+                    };
+                    stompClient.send("/app/chat", {}, JSON.stringify(chatMessageReply));
+                    replyToMessage(nickname, messageInput.value.trim(), document.getElementById(messageReplied).textContent);
+                }else {
+                    const chatMessage = {
+                        sender: nickname,
+                        receiver: selectedUserId,
+                        content: messageInput.value.trim(),
+                        timestamp: new Date()
+                    };
+                    stompClient.send("/app/chat", {}, JSON.stringify(chatMessage));
+                    displayMessage(nickname, messageInput.value.trim());
+                }
+             messageInput.value = '';
+            chatArea.scrollTop = chatArea.scrollHeight;
+            event.preventDefault();
         }
-        chatArea.scrollTop = chatArea.scrollHeight;
-        event.preventDefault();
-    }
-
 
     async function onMessageReceived(payload) {
         await findAndDisplayConnectedUsers();
         console.log('Message received', payload);
         const message = JSON.parse(payload.body);
         if (selectedUserId && selectedUserId === message.sender) {
-            displayMessage(message.sender, message.content);
+            if(reply === true||replyToReply===true){
+                replyToMessage(message.sender,message.content,message.previousMessage);
+            }else if(deleteM===true){
+                message.content="The message was removed"
+                displayMessage(message.sender,message.content);
+            }
+            else{
+                displayMessage(message.sender, message.content);
+            }
             chatArea.scrollTop = chatArea.scrollHeight;
         }
 
@@ -290,6 +432,18 @@
         }
     }
 
+    function onDelete(){
+        stompClient.send("/app/delete",{},
+            JSON.stringify(
+                {
+                    sender:nickname,
+                    receiver:selectedUserId,
+                    content:"dmdmdmd",
+                    timestamp:new Date()
+                }
+            )
+        )
+    }
     function onLogout() {
         stompClient.send("/app/user.disconnectUser",
             {},
@@ -301,6 +455,7 @@
     usernameForm.addEventListener('submit', connect, true);
     messageForm.addEventListener('submit', sendMessage, true);
     logout.addEventListener('click', onLogout, true);
+    deleting.addEventListener('click',onDelete,true);
     window.onbeforeunload = () => onLogout();
 </script>
 </body>

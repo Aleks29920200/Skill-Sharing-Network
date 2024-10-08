@@ -7,4 +7,7 @@ import org.springframework.stereotype.Service;
 @Service
 public interface AppointmentService{
 void addAppointment(AddAppointment addAppointment);
+
+
+    void removeAppointment(AddAppointment appointment);
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>SkillSharing</title>
@@ -8,31 +8,202 @@
     <link rel="stylesheet" type="text/css" href="/css/main.css"/>
     <script src="/js/jquery-3.5.1.slim.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0f0;
+        }
+        .cutout-form {
+            width: 300px;
+            height: auto;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+        }
+
+        input[type="text"], input[type="time"] {
+            padding: 10px;
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        input[type="button"] {
+            padding: 10px;
+            width: 100%;
+            margin: 10px 0;
+            background-color: #333;
+            color: white;
+            border: none;
+        }
+
+        #eventList {
+            margin-top: 20px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        event-item {
+            padding: 5px;
+            margin: 2px 0;
+            background: #f8f9fa;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        event-item:hover {
+            background: #e2e2e2;
+        }
+        event-list {
+            width: 400px;
+            height: auto;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .event-list h2 {
+            margin-bottom: 20px;
+        }
+
+        event-item {
+            padding: 15px;
+            background-color: #e0e0e0;
+            margin: 10px 0;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        event-item:hover {
+            background-color: #ccc;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 10px;
+            width: 100%;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 8px;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+    </style>
 </head>
 <body>
-<div>
-    <div>
-        <form class="form-control" id="appointmentForm" name="appointmentForm" th:object="${addAppointment}" th:action="@{/addAppointment}" method="post">
-            <div class="form-group">
-                <div>
-                    <label for="meet">
-                        <input id="meet" name="meet" type="text" value="text">
-                    </label>
-                </div>
-                <div class="form-group text-center">
-                    <input id="button" class="btn btn-primary" value="AddAppointment" type="button" onclick="getValue()">
-                </div>
-            </div>
-        </form>
-    </div>
+<div class="cutout-form">
+    <h3>Add Event</h3>
+    <form id="appointmentForm"  th:object="${addAppointment}" th:action="@{/addAppointment}" th:method="post">
+        <div class="form-row">
+            <label for="eventName">Event Name:</label>
+            <input id="eventName" th:name="*{name}" type="text" th:field="*{name}" placeholder="Enter event name">
+        </div>
+        <div class="form-row">
+            <label for="eventTime">Event Time:</label>
+            <input id="eventTime"  th:name="*{dateOfAppointment}" type="datetime-local" th:field="*{dateOfAppointment}">
+        </div>
+        <button id="addButton"  type="submit" onsubmit="addEvent()">Add event</button>
+    </form>
+        <h3>Remove Event</h3>
+        <p>Select an event then click on him to select it and press the button to remove it</p>
+        <ul id="eventList">
+        </ul>
+    <form th:action="@{/remove}" >
+        <span id="selectedAppointment" th:value="${addAppointment}"></span>
+    </form>
+        <input  id="removeButton" value="Remove Event" type="button" onclick="removeSelectedEvent()">
 </div>
-<script language="javascript">
-    function getValue(){
+<script th:inline="javascript">
+    const selectedDate = localStorage.getItem("selectedDate");
+
+    function addEvent() {
+        const eventName = document.getElementById('eventName').value;
+        const eventTime = document.getElementById('eventTime').value;
+
+        if (!eventName || !eventTime) {
+            alert("Please provide both event name and time");
+            return;
+        }
+
+        let events = localStorage.getItem(`${selectedDate}my`);
+        events = events ? JSON.parse(events) : [];
+
+        const eventExists = events.some(event => event.name === eventName && event.time === eventTime);
+        if (eventExists) {
+            alert("An event with the same name and time already exists for this date.");
+            return;
+        }
+
+        events.push({ name: eventName, time: eventTime });
+        localStorage.setItem(`${selectedDate}my`, JSON.stringify(events));
+        loadEventList();
+        document.getElementById('eventName').value = '';
+        document.getElementById('eventTime').value = '';
         opener.document.location.reload();
-        localStorage.setItem(localStorage.getItem('date')+'my',document.appointmentForm.meet.value);
+        self.close()
+    }
+
+    function loadEventList() {
+        const events = loadEvents();
+        const eventListDiv = document.getElementById('eventList');
+        eventListDiv.innerHTML = '';
+
+        events.forEach((event, index) => {
+            const eventItem = document.createElement('div');
+            eventItem.className = 'event-item';
+            eventItem.textContent = `${event.name} at ${event.time}`;
+            eventItem.dataset.index = index;
+            eventItem.onclick = () => selectEvent(eventItem);
+            eventListDiv.appendChild(eventItem);
+        });
+    }
+
+    function loadEvents() {
+        let events = localStorage.getItem(`${selectedDate}my`);
+        return events ? JSON.parse(events) : [];
+    }
+
+
+    function selectEvent(eventItem) {
+        const selectedItems = document.querySelectorAll('.event-item');
+        selectedItems.forEach(item => item.style.backgroundColor = '#f8f9fa');
+        eventItem.style.backgroundColor = '#d6e9f5';
+        localStorage.setItem('selectedEventIndex', eventItem.dataset.index);
+    }
+
+    function removeSelectedEvent() {
+        const selectedIndex = localStorage.getItem('selectedEventIndex');
+        let elementsByTagNameElement = document.getElementsByTagName('ul')[selectedIndex].innerText;
+        let strings = elementsByTagNameElement.split("at");
+        document.getElementById("selectedAppointment").innerText=strings[0]+" "+strings[1];
+        alert(document.getElementById("selectedAppointment").innerText);
+        if (selectedIndex === null) {
+            alert("Please select an event to remove.");
+            return;
+        }
+        let events = loadEvents();
+        events.splice(selectedIndex, 1);
+        localStorage.setItem(`${selectedDate}my`, JSON.stringify(events));
+        loadEventList();
+        localStorage.removeItem('selectedEventIndex');
+        opener.document.location.reload();
         self.close();
     }
+    loadEventList();
+
 </script>
 </body>
 </html>

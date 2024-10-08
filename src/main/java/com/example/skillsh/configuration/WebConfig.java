@@ -13,7 +13,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.authorizeRequests().
+        httpSecurity.csrf().and().cors().and().authorizeRequests().
                 requestMatchers("/index","/register","/login").permitAll().
                 requestMatchers("/search/**").permitAll().
                 requestMatchers("/home").fullyAuthenticated().

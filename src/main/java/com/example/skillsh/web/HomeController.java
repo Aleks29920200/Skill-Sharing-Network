@@ -87,9 +87,8 @@ public class HomeController {
         return modelAndView;
     }
     @GetMapping("/calendar")
-    public ModelAndView calendar(ModelAndView modelAndView){
-        modelAndView.setViewName("calendar");
-        return modelAndView;
+    public String calendar(){
+        return "calendar";
     }
     @GetMapping("/login")
     public String login(){
