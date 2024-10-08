@@ -1,18 +1,46 @@
 spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          discord:
+            client-id: 1293245816772890644
+            client-secret: 5ykjR62ioOwsbA_0uqsx3zwsdLVux5iq
+            scope:
+              - identify
+              - email
+            redirect-uri: http://localhost:8000/login/oauth2/code/discord
+            authorization-grant-type: authorization_code  # Ensure this is included
+          facebook:
+            client-id: 894218782668812
+            client-secret: be94cdd44f6ce03736cea9bacb7e44bf
+            scope:
+              - public_profile
+              - email
+            redirect-uri: http://localhost:8000/login/oauth2/code/facebook
+        provider:
+          discord:
+            authorization-uri: https://discord.com/api/oauth2/authorize
+            token-uri: https://discord.com/api/oauth2/token
+            user-info-uri: https://discord.com/api/users/@me
+            user-name-attribute: id
+          facebook:
+            authorization-uri: https://www.facebook.com/v10.0/dialog/oauth
+            token-uri: https://graph.facebook.com/v10.0/oauth/access_token
+            user-info-uri: https://graph.facebook.com/me?fields=id,name,email
   jpa:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
-        format_sql: 'TRUE'
+        format_sql: true
     hibernate:
       ddl-auto: update
-    open-in-view: 'false'
+    open-in-view: false
   mvc:
-    hidden method:
-      filter:
-        enabled: true
+    hidden-method-filter:
+      enabled: true
   datasource:
-    driverClassName: com.mysql.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver  # Use 'com.mysql.cj.jdbc.Driver' for MySQL 8 and above
     password: samsungga123@#456
     username: root
     url: jdbc:mysql://localhost:3306/trading
@@ -20,8 +48,8 @@ spring:
     properties:
       smtp:
         auth: true
-        STARTTLS:
-        enable: true
+        starttls:
+          enable: true
     username: akobachev@gmail.com
     password: dxze fiis jmiv pdtz
     host: smtp.gmail.com
@@ -29,14 +57,16 @@ spring:
     default-encoding: UTF-8
     protocol: smtp
     test-connection: false
+
 logging:
   level:
     org:
       hibernate:
         type:
           descriptor: TRACE
-        SQL: DEBUG
-      nodeValue: WARN
+        sql: DEBUG
+    nodeValue: WARN
     blog: WARN
+
 server:
   port: 8000

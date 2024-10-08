@@ -14,7 +14,7 @@ public class WebConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf().and().cors().and().authorizeRequests().
-                requestMatchers("/index","/register","/login").permitAll().
+                requestMatchers("/index","/register","/login","oauth2/authorization/facebook").permitAll().
                 requestMatchers("/search/**").permitAll().
                 requestMatchers("/home").fullyAuthenticated().
                 requestMatchers("/logout","/chatting","/videochat").authenticated().
@@ -25,7 +25,10 @@ public class WebConfig {
                 .usernameParameter(UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_USERNAME_KEY)
                 .passwordParameter(UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_PASSWORD_KEY)
                 .defaultSuccessUrl("/home", true)
-                .failureUrl("/login?error=true")
+                .failureUrl("/login?error=true").and()
+                .oauth2Login()
+                .loginPage("/login")
+                .defaultSuccessUrl("/facebookLogin", true)
                 .and()
                 .logout()
                 .logoutUrl("/logout")

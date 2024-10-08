@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.lang.annotation.Target;
 import java.security.Principal;
 import java.util.List;
 
@@ -85,6 +86,10 @@ public class HomeController {
             modelAndView.addObject("user",userService.findUserByUsername(principal.getName()).get());
         }
         return modelAndView;
+    }
+    @GetMapping("/facebookLogin")
+    public String homeO2auth(){
+        return "facebookLogin";
     }
     @GetMapping("/calendar")
     public String calendar(){
