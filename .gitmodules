@@ -1,3 +1,3 @@
-[submodule "angularclient1"]
-	path = angularclient1
+[submodule "angularclient"]
+	path = angularclient
 	url = https://github.com/Aleks29920200/angularclient.git
