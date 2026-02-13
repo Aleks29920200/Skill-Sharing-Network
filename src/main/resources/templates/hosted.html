@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Buy cool new product</title>
+</head>
+<body>
+
+<p>Buyer ID: <span id="userIdDisplay" th:text="${user.id}">1</span></p>
+<p>Offer ID: <span id="offerIdDisplay" th:text="${offer.id}">1</span></p>
+
+<button type="button" id="checkoutButton"
+        th:attr="data-user-id=${user.id}, data-offer-id=${offer.id}">
+    Pay Now
+</button>
+
+</body>
+</html>
+<script>
+    document.getElementById('checkoutButton').addEventListener('click', async (event) => {
+
+        // Use the button that was clicked to retrieve the IDs from data attributes
+        const button = event.currentTarget;
+        const userId = button.getAttribute('data-user-id');
+        const offerId = button.getAttribute('data-offer-id');
+
+        // 1. Prepare the JSON request body
+        const requestBody = {
+            // Ensure they are parsed as numbers before sending, though JSON handles strings fine too.
+            userId: parseInt(userId),
+            offerId: parseInt(offerId)
+        };
+
+        try {
+            // 2. Call your Spring Boot controller (PaymentController endpoint)
+            const response = await fetch('/api/payment/intent', {
+                method: 'POST',
+                headers: {
+                    // *** CRITICAL FIX: The Content-Type must NOT have a leading slash ***
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            });
+
+            if (!response.ok) {
+                // Log full response text/json for debugging server-side issues
+                const errorText = await response.text();
+                console.error('Server error response:', errorText);
+                throw new Error(`HTTP error! Status: ${response.status}. Details: ${errorText.substring(0, 100)}...`);
+            }
+
+            // 3. Handle the Payment Intent response
+            const data = await response.json();
+
+            // If you are using the PaymentController (to get clientSecret):
+            const clientSecret = data.clientSecret;
+            console.log("Payment Intent created. Client Secret:", clientSecret);
+
+            // --- NEXT STEP: Implement Stripe.js Confirmation ---
+            // You would typically use the clientSecret here to confirm the payment on the client side:
+            // stripe.confirmCardPayment(clientSecret, { payment_method: { card: cardElement } })
+
+            alert("Payment Intent created successfully. Ready for Stripe.js confirmation!");
+
+        } catch (error) {
+            console.error('Payment initiation failed:', error);
+            alert('Failed to start the payment process. Check console for details.');
+        }
+    });
+</script>
+</body>
+</html>

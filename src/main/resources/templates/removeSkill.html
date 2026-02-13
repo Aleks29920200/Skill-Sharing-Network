@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Skills</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts - Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f3f4f6;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 p-4 sm:p-8">
+
+<div class="flex items-center justify-center min-h-screen">
+  <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-4xl">
+
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6 pb-4 border-b border-gray-200">
+      <h1 class="text-3xl font-bold text-gray-800">Manage Skills</h1>
+      <div class="flex space-x-2">
+        <a th:href="@{/admin/add-skill}" class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+          Add Skill
+        </a>
+        <a th:href="@{/home}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition-colors">
+          Back to Admin Home
+        </a>
+      </div>
+    </div>
+
+    <!-- Skills List Table -->
+    <div th:if="${not #lists.isEmpty(skills)}">
+      <table class="min-w-full bg-white rounded-lg overflow-hidden shadow">
+        <thead class="bg-gray-50">
+        <tr>
+          <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+          <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Skill Name</th>
+          <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+          <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+          <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tag</th>
+          <th class="py-3 px-6 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+        </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+        <tr th:each="skill : ${skills}">
+          <td th:text="${skill.id}" class="py-4 px-6 whitespace-nowrap text-sm font-medium text-gray-900"></td>
+          <td th:text="${skill.name}" class="py-4 px-6 whitespace-nowrap text-sm text-gray-500"></td>
+          <td th:text="${skill.category}" class="py-4 px-6 whitespace-nowrap text-sm text-gray-500"></td>
+          <td th:text="${skill.description}" class="py-4 px-6 whitespace-nowrap text-sm text-gray-500"></td>
+          <td th:text="${skill.tag}" class="py-4 px-6 whitespace-nowrap text-sm text-gray-500"></td>
+          <td class="py-4 px-6 whitespace-nowrap text-right text-sm font-medium space-x-2">
+            <a th:href="@{/admin/skill-details/{id}(id=${skill.id})}" class="bg-gray-400 hover:bg-gray-500 text-white py-2 px-4 rounded-lg transition-colors">
+              Details
+            </a>
+            <a th:href="@{/admin/edit-skill/{id}(id=${skill.id})}" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg transition-colors">
+              Edit
+            </a>
+            <form th:action="@{/admin/skills/{id}(id=${skill.id})}" method="post" class="inline-block">
+              <input type="hidden" name="_method" value="delete" />
+              <button type="submit" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg transition-colors" onclick="return confirm('Are you sure you want to remove this skill?');">
+                Remove
+              </button>
+            </form>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div th:if="${#lists.isEmpty(skills)}" class="text-center p-8 text-gray-500">
+      No skills to display.
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

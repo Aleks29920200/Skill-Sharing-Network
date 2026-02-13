@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${userProfile.firstName + ' ' + userProfile.lastName + ' - SkillSharing Profile'}">User Profile - SkillSharing</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/css/main.css"/>
+    <script src="/js/jquery-3.5.1.slim.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <link rel="icon" href="/img/favicon.ico" type="image/x-icon"/>
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        :root {
+            --primary-dark: #2c3e50; /* Dark blue/grey for header/footer and strong text */
+            --accent-color: #3498db; /* A vibrant blue for links/buttons/highlights */
+            --accent-color-hover: #2980b9; /* Slightly darker blue for hover */
+            --card-bg-light: #fdfefe; /* Off-white for card backgrounds */
+            --text-dark: #34495e; /* Dark text */
+            --text-light: #ecf0f1; /* Light text for dark backgrounds */
+            --border-light-subtle: #e9ecef; /* A very light border color */
+        }
+
+        body {
+            background-color: #f8f9fa; /* Light background */
+            color: var(--text-dark);
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; /* Modern font stack */
+        }
+
+        /* General Link and Button Styling */
+        a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+        a:hover {
+            color: var(--accent-color-hover);
+            text-decoration: underline;
+        }
+        .btn-accent-color {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            color: white;
+            transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+        }
+        .btn-accent-color:hover {
+            background-color: var(--accent-color-hover);
+            border-color: var(--accent-color-hover);
+            transform: translateY(-1px);
+            color: white; /* Ensure text remains white on hover */
+        }
+        .btn-outline-info {
+            color: var(--accent-color);
+            border-color: var(--accent-color);
+            transition: all 0.3s ease;
+        }
+        .btn-outline-info:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: var(--primary-dark);
+            padding: 0.8rem 0; /* Slightly reduce padding */
+        }
+        .navbar .btn, .navbar a {
+            color: var(--text-light);
+            margin-right: 10px;
+            border-color: var(--text-light);
+        }
+        .navbar .btn:hover, .navbar a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent-color); /* Add a subtle border color change */
+        }
+        .navbar-brand img {
+            height: 45px; /* Adjust logo size */
+            margin-right: 10px;
+        }
+
+        /* Profile Header Section */
+        .profile-header {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .profile-img {
+            width: 180px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 6px solid var(--accent-color);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            margin-bottom: 25px;
+        }
+        .profile-name {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary-dark);
+            margin-bottom: 5px;
+        }
+        .profile-username {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+        }
+        .profile-email {
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+        }
+        .profile-bio {
+            font-size: 1rem;
+            color: #555;
+            line-height: 1.6;
+            margin-top: 20px;
+            padding: 0 20px;
+        }
+
+        /* Skills Section */
+        .skills-section {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .skills-list .badge {
+            font-size: 1.1rem;
+            padding: 0.7em 1.2em;
+            margin: 5px;
+            border-radius: 20px;
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        /* Review Section (reused from homepage, with minor tweaks) */
+        .review-section {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .review-item {
+            background-color: #fdfefe; /* Lighter background for individual reviews */
+            padding: 18px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.07);
+            border: 1px solid #f0f0f0;
+        }
+        .review-author {
+            font-weight: bold;
+            color: var(--primary-dark);
+        }
+        .review-date {
+            font-size: 0.8rem;
+            color: #95a5a6;
+            margin-left: 8px;
+        }
+        .review-text {
+            margin-top: 10px;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        /* Comment Section */
+        .comment-section {
+            margin-top: 15px;
+            padding-left: 25px;
+            border-left: 4px solid var(--accent-color);
+            background-color: #f8faff;
+            padding-top: 10px;
+            padding-bottom: 5px;
+            border-radius: 0 0 8px 8px;
+        }
+        .comment-item {
+            background-color: #eef1f4;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        .comment-author {
+            font-weight: bold;
+            color: var(--primary-dark);
+        }
+        .form-control-sm {
+            margin-bottom: 8px;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--primary-dark);
+            color: var(--text-light);
+            padding: 1.5rem 0;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="/home">
+            <img src="/img/logo.png" alt="SkillSharing Logo" class="me-2" style="height: 45px;">
+            <span class="fw-bold fs-4 text-white">SkillSharing</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto align-items-center">
+                <li class="nav-item me-2" sec:authorize="isAuthenticated()">
+                    <a th:href="@{'/user/videochat/' + ${currentUserId}}" class="btn btn-outline-info text-white">
+                        <i class="bi bi-camera-video me-1"></i> Meeting
+                    </a>
+                </li>
+                <li class="nav-item me-2" sec:authorize="isAuthenticated()">
+                    <form th:action="@{/logout}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-outline-light">
+                            <i class="bi bi-box-arrow-right me-1"></i> Logout
+                        </button>
+                    </form>
+                </li>
+                <li class="nav-item me-2" sec:authorize="!isAuthenticated()">
+                    <a href="/login" class="btn btn-outline-light">
+                        <i class="bi bi-box-arrow-in-right me-1"></i> Login
+                    </a>
+                </li>
+                <li class="nav-item" sec:authorize="!isAuthenticated()">
+                    <a href="/register" class="btn btn-primary">
+                        <i class="bi bi-person-plus me-1"></i> Register
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container py-5">
+    <div class="profile-header d-flex flex-column align-items-center">
+        <img th:src="'data:image/jpeg;base64,' + ${imageUtil.getImgData(userProfile.getPhotoUrl().getFileData())}"
+             alt="User Profile Photo" class="profile-img">
+        <h1 class="profile-name" th:text="${userProfile.firstName + ' ' + userProfile.lastName}">John Doe</h1>
+        <p class="profile-username">@<strong th:text="${userProfile.username}">johndoe</strong></p>
+        <p class="profile-email"><i class="bi bi-envelope-fill me-2"></i><strong th:text="${userProfile.email}">john.doe@example.com</strong></p>
+
+        <p class="profile-bio text-center" th:if="${userProfile.bio != null and userProfile.bio != ''}" th:text="${userProfile.bio}">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        </p>
+        <p class="profile-bio text-center text-muted" th:if="${userProfile.bio == null or userProfile.bio == ''}">
+            No bio provided yet.
+        </p>
+
+        <div class="mt-4 d-flex gap-3">
+            <!-- Show Edit Profile button if current authenticated user is viewing their own profile -->
+            <a th:if="${isAuthenticatedUser and userProfile.id == currentUserId}" th:href="@{'/user/edit-profile/' + ${userProfile.id}}" class="btn btn-accent-color btn-lg">
+                <i class="bi bi-pencil-square me-2"></i> Edit Profile
+            </a>
+            <!-- Show Send Message button if viewing another user's profile -->
+            <button th:if="${isAuthenticatedUser and userProfile.id != currentUserId}" class="btn btn-accent-color btn-lg" onclick="location.href='/user/home/chatting'">
+                <i class="bi bi-chat-dots me-2"></i> Send a Message
+            </button>
+            <!-- If not authenticated, prompt to login/register to send message -->
+            <a th:unless="${isAuthenticatedUser}" href="/login" class="btn btn-accent-color btn-lg">
+                <i class="bi bi-chat-dots me-2"></i> Login to Message
+            </a>
+        </div>
+    </div>
+
+    <!-- Skills Offered Section -->
+    <div class="skills-section">
+        <h3 class="mb-4 text-center fw-bold text-primary-dark">Skills Offered</h3>
+        <div th:if="${ != null and not #lists.isEmpty(userProfile.skills)}" class="text-center skills-list">
+            <span th:each="skill : ${userProfile.skills}" class="badge bg-accent-color me-2 mb-2" th:text="${skill.name}">Skill Name</span>
+        </div>
+        <div th:unless="${userProfile.skills != null and not #lists.isEmpty(userProfile.skills)}" class="text-center text-muted">
+            <p>This user has not listed any skills yet.</p>
+        </div>
+    </div>
+
+    <!-- Reviews Section -->
+    <div class="review-section">
+        <h3 class="mb-4 text-center fw-bold text-primary-dark">Reviews for <span th:text="${userProfile.firstName}"></span></h3>
+        <div th:if="${userProfile.review != null and not #lists.isEmpty(userProfile.review)}">
+            <div th:each="review : ${userProfile.review}" class="review-item">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="review-author" th:text="${review.reviewingUser.username}">Reviewer Name</span>
+                    <span class="review-date" th:text="${#temporals.format(review.dateOfReview, 'yyyy-MM-dd HH:mm')}">2023-10-26 14:30</span>
+                </div>
+                <p class="review-text" th:text="${review.reviewText}">This is a great review about the user's skills and helpfulness. Highly recommend!</p>
+
+                <div class="comment-section" th:if="${not #lists.isEmpty(review.comments)}">
+                    <small class="text-muted d-block mb-2 fw-bold">Comments:</small>
+                    <div th:each="comment : ${review.comments}" class="comment-item">
+                        <small>
+                            <span class="comment-author" th:text="${comment.author.username}">Commenter</span>:
+                            <span th:text="${comment.text}">This is a comment on the review.</span>
+                        </small>
+                    </div>
+                </div>
+
+                <form th:action="@{/reviews/{reviewId}/comments(reviewId=${review.id})}" method="post" sec:authorize="isAuthenticated()" class="mt-3">
+                    <div class="input-group input-group-sm">
+                        <input name="text" class="form-control" placeholder="Add a comment..." required />
+                        <button type="submit" class="btn btn-outline-secondary">
+                            <i class="bi bi-chat-right-text"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div th:unless="${userProfile.review != null and not #lists.isEmpty(userProfile.review)}" class="text-center text-muted">
+            <p>No reviews yet. Be the first to leave one!</p>
+        </div>
+
+        <!-- Form to Leave a New Review -->
+        <form th:action="@{/user/{id}/reviews(id=${userProfile.id})}" method="post" sec:authorize="isAuthenticated()" class="w-100 mt-5 pt-4 border-top border-light-subtle">
+            <h6 class="mb-2 text-start fw-bold text-primary-dark">Leave a Review for <span th:text="${userProfile.firstName}"></span>:</h6>
+            <textarea name="content" class="form-control my-2" placeholder="Share your experience..." rows="4" required></textarea>
+            <button type="submit" class="btn btn-success w-100 py-2">
+                <i class="bi bi-star-fill me-1"></i> Submit Review
+            </button>
+        </form>
+        <div th:unless="${isAuthenticatedUser}" class="text-center text-muted mt-5 pt-4 border-top border-light-subtle">
+            <p>Please <a href="/login">login</a> or <a href="/register">register</a> to leave a review.</p>
+        </div>
+    </div>
+</div>
+
+<footer class="footer mt-auto py-3 bg-dark">
+    <div class="container text-center">
+        <span class="text-light">&copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2025</span> SkillSharing. All rights reserved.</span>
+    </div>
+</footer>
+
+</body>
+</html>

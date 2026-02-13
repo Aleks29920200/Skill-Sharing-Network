@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>SkillSharing - Register</title>
+  <link rel="stylesheet" href="/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="/css/main.css"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body class="bg-light">
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+  <div class="card shadow-lg p-4" style="width: 100%; max-width: 500px;">
+    <h3 class="text-center mb-4">Create Account</h3>
+
+    <form th:object="${registerAsClientDto}" th:action="@{/registerClient}" method="post" enctype="multipart/form-data">
+
+      <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" id="username" th:field="*{username}" class="form-control" placeholder="Enter username" minlength="5" maxlength="20" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="firstName" class="form-label">First Name</label>
+        <input type="text" id="firstName" th:field="*{firstName}" class="form-control" placeholder="Enter first name" minlength="2" maxlength="20" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="lastName" class="form-label">Last Name</label>
+        <input type="text" id="lastName" th:field="*{lastName}" class="form-control" placeholder="Enter last name" minlength="2" maxlength="20" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="email" class="form-label">Email Address</label>
+        <input type="email" id="email" th:field="*{email}" class="form-control" placeholder="Enter email" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" id="password" th:field="*{password}" class="form-control" placeholder="Enter password" required>
+      </div>
+
+      <div>
+        <label for="upload-image">Image upload</label>
+        <input type="file" id="upload-image" th:field="*{photoUrl}" name="img" required class="form-control-file">
+      </div>
+      <div class="d-grid">
+        <button type="submit" class="btn btn-primary">Register</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
