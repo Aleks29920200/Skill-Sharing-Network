@@ -1,0 +1,95 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 shadow-sm fixed-top">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold d-flex align-items-center gap-2" routerLink="/home">
+      <i class="fas fa-handshake"></i> SkillSharing
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+
+      <form class="d-flex mx-auto my-2 my-lg-0 w-100 w-lg-50" role="search" (submit)="performSearch()">
+        <div class="input-group">
+          <input class="form-control" type="search"
+                 placeholder="Search for skills (e.g. IT, Medicine)..."
+                 [(ngModel)]="searchQuery" name="searchQuery">
+          <button class="btn btn-primary" type="submit">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+      </form>
+
+      <ul class="navbar-nav ms-auto gap-2 align-items-center">
+
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/home" routerLinkActive="active">
+            <i class="fas fa-home"></i> Home
+          </a>
+        </li>
+
+        <ng-container *ngIf="currentUser">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/calendar" routerLinkActive="active">
+              <i class="far fa-calendar-alt"></i> Calendar
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/chat" routerLinkActive="active">
+              <i class="far fa-comments"></i> Messages
+            </a>
+          </li>
+
+          <li class="nav-item" *ngIf="isAdmin">
+            <a class="btn btn-warning btn-sm text-dark fw-bold" routerLink="/admin">
+              <i class="fas fa-user-shield"></i> Admin
+            </a>
+          </li>
+
+          <li class="nav-item dropdown border-start ps-2 ms-2">
+            <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" role="button" data-bs-toggle="dropdown">
+              <div class="w-8 h-8 rounded-full bg-secondary text-white d-flex justify-content-center align-items-center" style="width: 30px; height: 30px; border-radius: 50%;">
+                {{ currentUser.charAt(0).toUpperCase() }}
+              </div>
+              <span>{{ currentUser }}</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li>
+                <a class="dropdown-item" [routerLink]="['/profile', currentUserId]">
+                  <i class="fas fa-user me-2"></i> My Profile
+                </a>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <button class="dropdown-item text-danger" (click)="logout()">
+                  <i class="fas fa-sign-out-alt me-2"></i> Logout
+                </button>
+              </li>
+            </ul>
+          </li>
+        </ng-container>
+
+        <ng-container *ngIf="!currentUser">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/login" routerLinkActive="active">Login</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="btn btn-outline-light btn-sm dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+              Register
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" routerLink="/register/client">As Client</a></li>
+              <li><a class="dropdown-item" routerLink="/register/expert">As Expert</a></li>
+            </ul>
+          </li>
+        </ng-container>
+
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container-fluid p-0" style="padding-top: 70px;">
+  <router-outlet></router-outlet>
+</div>
